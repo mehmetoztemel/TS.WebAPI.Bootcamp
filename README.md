@@ -1,4 +1,19 @@
-
+# İçindekiler
+- .NET nedir?
+- .NET versiyonları
+- .NET SDK
+- WebAPI Nedir
+- WebAPI metotları
+- Controller | ActionResult yapısı
+- Query Params
+- Route Params
+- Body
+- HttpContext, HttpContextAccessor
+- CORS Policy
+- Rate Limiting
+- Asenkron metotlar ve Cancellation Token
+- Health Check
+- Personel Kayıt projesi
 
 # .NET Nedir?
 .NET, Microsoft tarafından geliştirilen, farklı türde uygulama oluşturmayı sağlayan bir yazılım geliştirme platformudur.
