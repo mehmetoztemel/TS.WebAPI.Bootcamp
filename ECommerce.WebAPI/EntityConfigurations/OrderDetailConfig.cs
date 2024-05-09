@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ECommerce.WebAPI.EntityConfigurations
 {
-    public class ProductConfig : IEntityTypeConfiguration<Product>
+    public class OrderDetailConfig : IEntityTypeConfiguration<OrderDetail>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public void Configure(EntityTypeBuilder<OrderDetail> builder)
         {
             builder.Property(x => x.Price).HasColumnType("decimal(18,2)");
-            builder.HasIndex(x => x.Name).IsUnique();
+            builder.Property(x => x.Total).HasColumnType("decimal(18,2)");
         }
     }
 }

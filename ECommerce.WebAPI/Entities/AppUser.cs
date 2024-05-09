@@ -9,5 +9,7 @@ namespace ECommerce.WebAPI.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+        public ICollection<Order> Orders { get; set; }
+        public ICollection<Basket> Baskets { get; set; }
     }
 }

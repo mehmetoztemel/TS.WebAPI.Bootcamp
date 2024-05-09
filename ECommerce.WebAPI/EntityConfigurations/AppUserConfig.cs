@@ -8,7 +8,8 @@ namespace ECommerce.WebAPI.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {
-            builder.HasData(new AppUser { Email = "admin@admin.com", Password = "1234", FirstName = "Admin", LastName = "Admin", CreatedDate = DateTime.Now });
+            builder.HasMany(x => x.Orders).WithOne(x => x.AppUser).HasForeignKey(x => x.UserId);
+            builder.HasMany(x => x.Baskets).WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
     }
 }

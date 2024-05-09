@@ -23,13 +23,12 @@ namespace ECommerce.WebAPI.Controllers
         [Route("register")]
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register(UserRegisterDto request)
+        public async Task<IActionResult> Register(UserRegisterDto request, CancellationToken cancellationToken)
         {
             AppUser user = _mapper.Map<AppUser>(request);
-            _dbContext.AppUsers.Add(user);
-            await _dbContext.SaveChangesAsync();
+            await _dbContext.AppUsers.AddAsync(user, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return Created();
         }
-
     }
 }
