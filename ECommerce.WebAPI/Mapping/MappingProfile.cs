@@ -9,9 +9,11 @@ namespace ECommerce.WebAPI.Mapping
         public MappingProfile()
         {
             CreateMap<UserRegisterDto, AppUser>();
+            CreateMap<ProductDto, Product>().ReverseMap();
             CreateMap<ProductCreateDto, Product>();
             CreateMap<ProductUpdateDto, Product>();
             CreateMap<BasketDto, Basket>().ReverseMap();
+            CreateMap<BasketProductAddDto, Basket>();
         }
     }
 }

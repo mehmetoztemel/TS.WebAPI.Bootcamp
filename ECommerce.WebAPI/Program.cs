@@ -1,7 +1,10 @@
 using ECommerce.WebAPI.Context;
 using ECommerce.WebAPI.Mapping;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -18,7 +21,7 @@ builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(setup =>
 {
-    setup.SwaggerDoc("v1", new OpenApiInfo { Title = "NLayer.API", Version = "v1" });
+    setup.SwaggerDoc("v1", new OpenApiInfo { Title = "ECommerce.WebAPI", Version = "v1" });
     var jwtSecuritySheme = new OpenApiSecurityScheme
     {
         BearerFormat = "JWT",
@@ -81,8 +84,22 @@ builder.Services.AddCors(corsOptions => corsOptions.AddDefaultPolicy(options =>
 
 #endregion
 
+#region RateLimiter
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("fixed", config =>
+    {
+        config.PermitLimit = 1;
+        config.Window = TimeSpan.FromSeconds(10);
+        config.QueueLimit = 1;
+        config.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+    });
+});
+#endregion
 
-
+#region HealthCheck
+builder.Services.AddHealthChecks().AddCheck("apiInformation", () => HealthCheckResult.Healthy());
+#endregion
 
 builder.Services.AddDbContext<ECommerceDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConnection")));
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -97,11 +114,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetService<ECommerceDbContext>();
+    context.Database.Migrate();
+}
+
 app.UseHttpsRedirection();
 app.UseCors();
+
+app.UseHealthChecks("/healthcheck", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
+app.MapControllers().RequireRateLimiting("fixed");
 
 app.Run();

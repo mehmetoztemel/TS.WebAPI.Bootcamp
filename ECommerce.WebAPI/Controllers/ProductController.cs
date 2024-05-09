@@ -19,6 +19,15 @@ namespace ECommerce.WebAPI.Controllers
             _dbContext = dbContext;
             _mapper = mapper;
         }
+
+        [Route("getproducts")]
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            List<Product> products = await _dbContext.Products.ToListAsync();
+            return Ok(_mapper.Map<List<ProductDto>>(products));
+        }
+
         [Route("createproduct")]
         [HttpPost]
         public async Task<IActionResult> CreateProduct(ProductCreateDto request, CancellationToken cancellationToken)
@@ -44,9 +53,9 @@ namespace ECommerce.WebAPI.Controllers
             else return BadRequest("Product cannot find");
         }
 
-        [Route("getproduct")]
+        [Route("getbyname")]
         [HttpGet]
-        public async Task<IActionResult> GetProduct(string name, CancellationToken cancellationToken)
+        public async Task<IActionResult> GetProductByName(string name, CancellationToken cancellationToken)
         {
             bool productCheck = await _dbContext.Products.AnyAsync(x => x.Name == name, cancellationToken);
             if (productCheck)
