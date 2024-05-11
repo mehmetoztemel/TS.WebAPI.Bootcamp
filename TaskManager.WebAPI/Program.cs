@@ -61,7 +61,7 @@ app.UseHealthChecks("/healthcheck", new Microsoft.AspNetCore.Diagnostics.HealthC
 
 
 app.UseAuthorization();
-
+app.UseRateLimiter();
 app.MapControllers().RequireRateLimiting("limiter"); // bütün endpointlerde uygulamak için bu parametreyi aktif ediyoruz.
 
 app.Run();
